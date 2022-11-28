@@ -6,4 +6,4 @@ if [ $# -eq 0 ]
     tag=$1
 fi
 
-docker build -t jkaninda/nginx-php-fpm:$tag .
+docker build -t philharmonie/nginx-php-fpm:$tag .

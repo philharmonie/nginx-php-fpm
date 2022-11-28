@@ -1,10 +1,11 @@
-FROM php:8.1.11-fpm
+FROM php:8.1.12-fpm
+
 ARG WORKDIR=/var/www/html
 ENV DOCUMENT_ROOT=${WORKDIR}
-ENV LARAVEL_PROCS_NUMBER=1
 ENV DOMAIN=_
 ENV CLIENT_MAX_BODY_SIZE=15M
 ENV NODE_VERSION=17.x
+
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
@@ -34,27 +35,10 @@ RUN apt-get update && apt-get install -y nginx
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-# Install Kafka 
-RUN git clone https://github.com/arnaud-lb/php-rdkafka.git\
-    && cd php-rdkafka \
-    && phpize \
-    && ./configure \
-    && make all -j 5 \
-    && make install 
-
-# Install Rdkafka and enable it
-RUN docker-php-ext-enable rdkafka \
-     && cd .. \
-    && rm -rf /php-rdkafka
 
 # Install PHP extensions zip, mbstring, exif, bcmath, intl
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install  zip mbstring exif pcntl bcmath -j$(nproc) gd intl
-
-# Install Redis and enable it
-RUN pecl install redis  && docker-php-ext-enable redis
-
-
 
 # Install the php memcached extension
 RUN pecl install memcached && docker-php-ext-enable memcached
@@ -75,24 +59,21 @@ WORKDIR $WORKDIR
 RUN rm -Rf /var/www/* && \
 mkdir -p /var/www/html
 
-ADD src/index.php $WORKDIR/index.php
-ADD src/conf/nginx/default.conf /etc/nginx/sites-available/default
-ADD src/php.ini $PHP_INI_DIR/conf.d/
-ADD src/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
+ADD docker/conf/nginx/default.conf /etc/nginx/sites-available/default
+ADD docker/php.ini $PHP_INI_DIR/conf.d/
+ADD docker/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 
-COPY ./entrypoint.sh /usr/local/bin/
+COPY docker/entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
 RUN ln -s /usr/local/bin/entrypoint.sh /
 
 ENTRYPOINT ["entrypoint.sh"]
-
-
 
 RUN usermod -u 1000 www-data
 RUN groupmod -g 1000 www-data
 
 RUN chmod -R 755 $WORKDIR
 RUN chown -R www-data:www-data $WORKDIR
-EXPOSE 9000 80
+EXPOSE 80
 CMD [ "entrypoint" ]
 

@@ -1,14 +1,8 @@
-![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/jkaninda/nginx-php-fpm?style=flat-square)
-![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/jkaninda/nginx-php-fpm?style=flat-square)
-![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/jkaninda/nginx-php-fpm?style=flat-square)
-![Docker Pulls](https://img.shields.io/docker/pulls/jkaninda/nginx-php-fpm?style=flat-square)
-
 # Nginx PHP-FPM Docker image
 
-> 🐳 Full Docker image for Nginx PHP-FPM container created to run Laravel or any php based applications.
+> 🐳 Full Docker image for Nginx PHP-FPM container created to run any php based applications.
 
-- [Docker Hub](https://hub.docker.com/r/jkaninda/nginx-php-fpm)
-- [Github](https://github.com/jkaninda/nginx-php-fpm)
+- [Github](https://github.com/philharmonie/nginx-php-fpm)
 
 ## Specifications:
 
@@ -17,16 +11,12 @@
 * OpenSSL PHP Extension
 * XML PHP Extension
 * PDO PHP Extension
-* Rdkafka PHP Extension
-* Redis PHP Extension
 * Mbstring PHP Extension
 * PCNTL PHP Extension
 * ZIP PHP Extension
 * GD PHP Extension
 * BCMath PHP Extension
 * Memcached
-* Laravel Cron Job
-* Laravel Schedule
 * Supervisord
 * Nodejs
 * NPM
@@ -37,7 +27,7 @@
 version: '3'
 services:
     app:
-        image: jkaninda/nginx-php-fpm:latest
+        image: philharmonie/nginx-php-fpm:latest
         container_name: my-app
         restart: unless-stopped      
         volumes:
@@ -48,17 +38,6 @@ services:
         networks:
             - default #if you're using networks between containers
 
-```
-## Laravel `artisan` command usage:
-### CLI
-```sh
-docker-compose exec  app bash
-
-```
-```sh
-docker exec -it app bash
-
-```
 
 ## Advanced Nignx-php-fpm:
 ### docker-compose.yml
@@ -66,7 +45,7 @@ docker exec -it app bash
 version: '3'
 services:
     app:
-        image: jkaninda/nginx-php-fpm
+        image: philharmonie/nginx-php-fpm
         container_name: nginx-fpm
         restart: unless-stopped 
         ports:
@@ -78,7 +57,6 @@ services:
              #./php.ini:/usr/local/etc/php/conf.d/php.ini # Optional, your custom php init file
         environment:
            - APP_ENV=development # Optional, or production
-           - LARAVEL_PROCS_NUMBER=2 # Optional, Laravel queue:work process number
            #- CLIENT_MAX_BODY_SIZE=20M # Optional
            #- DOMAIN=example.com # Optional
            - DOCUMENT_ROOT=/var/www/html #Optional
@@ -100,12 +78,6 @@ services:
 ### Add more supervisor process in
 > /var/www/html/conf/worker/supervisor.conf
 
-### Storage permision issue
-> docker-compose exec php-fpm /bin/bash 
-
-> chown -R www-data:www-data /var/www/html/storage
-
-> chmod -R 775 /var/www/html/storage
 
 > P.S. please give a star if you like it :wink:
 
