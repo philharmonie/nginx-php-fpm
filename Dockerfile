@@ -4,7 +4,7 @@ ARG WORKDIR=/var/www/html
 ENV DOCUMENT_ROOT=${WORKDIR}
 ENV DOMAIN=_
 ENV CLIENT_MAX_BODY_SIZE=15M
-ENV NODE_VERSION=17.x
+ENV NODE_VERSION=18.x
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
